@@ -1,7 +1,12 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DepartemenController;
+use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RiskRegisterController;
+use App\Http\Controllers\UserController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,3 +26,23 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::get('admin/dashboard', [DashboardController::class, 'admin'])->middleware(['auth', 'admin'])->name('admin.dashboard');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/pengaturan-user', [UserController::class, 'index'])->name('admin.user');
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/pengaturan-departemen', [DepartemenController::class, 'index'])->name('admin.departemen');
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/pengaturan-departemen', [DepartemenController::class, 'index'])->name('admin.departemen');
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/pengaturan-kategori', [KategoriController::class, 'index'])->name('admin.kategori');
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/risk-register', [RiskRegisterController::class, 'index'])->name('admin.risk-register');
+});
