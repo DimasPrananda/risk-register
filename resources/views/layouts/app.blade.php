@@ -17,7 +17,9 @@
     <body class="font-sans antialiased">
         <div class="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900">
             <div class=" flex flex-1">
-                @include('layouts.side-bar')
+                <div class=" max-h-full">
+                    @include('layouts.side-bar')
+                </div>
                 <div class=" flex flex-1 flex-col">
                     @include('layouts.navigation')
                     

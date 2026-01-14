@@ -30,7 +30,7 @@
                 @forelse ($kategoris as $index => $kategori)
                 <tr>
                     <td class=" text-center px-4 py-2">{{ $loop->iteration }} .</td>
-                    <td class=" text-center px-4 py-2">{{ $kategori->nama_kategori }}</td>
+                    <td class=" text-left px-4 py-2">{{ $kategori->nama_kategori }}</td>
                     <td class=" text-center px-4 py-2">
                         <form action="{{ route('kategori.destroy', $kategori->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');">
                             @csrf

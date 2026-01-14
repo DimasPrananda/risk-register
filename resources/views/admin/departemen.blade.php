@@ -30,7 +30,7 @@
                 @forelse ($departemens as $index => $departemen)
                 <tr>
                     <td class=" text-center px-4 py-2">{{ $loop->iteration }} .</td>
-                    <td class=" text-center px-4 py-2">{{ $departemen->nama_departemen }}</td>
+                    <td class=" text-left px-4 py-2">{{ $departemen->nama_departemen }}</td>
                     <td class=" text-center px-4 py-2">
                         <form action="{{ route('departemen.destroy', $departemen->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus departemen ini?');">
                             @csrf
