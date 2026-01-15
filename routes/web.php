@@ -29,10 +29,9 @@ Route::get('admin/dashboard', [DashboardController::class, 'admin'])->middleware
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/pengaturan-user', [UserController::class, 'index'])->name('admin.user');
-});
-
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/pengaturan-departemen', [DepartemenController::class, 'index'])->name('admin.departemen');
+    Route::post('/admin/pengaturan-user', [UserController::class, 'store'])->name('user.store');
+    Route::put('/admin/pengaturan-user/{user}', [UserController::class, 'update'])->name('user.update');
+    Route::delete('/admin/pengaturan-user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {

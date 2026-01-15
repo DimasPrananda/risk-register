@@ -9,4 +9,9 @@ class Departemen extends Model
 {
     protected $fillable = ['nama_departemen'];
 
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
 }
