@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiskRegisterController;
 use App\Http\Controllers\UserController;
@@ -49,5 +50,31 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/risk-register', [RiskRegisterController::class, 'index'])->name('admin.risk-register');
+    // Pilih periode
+    Route::get('/admin/risk-register', [RiskRegisterController::class, 'pilihPeriode'])
+        ->name('risk.pilih-periode');
+
+    Route::post('/admin/risk-register', [RiskRegisterController::class, 'submitPeriode'])
+        ->name('risk.submit-periode');
+
+    // Sasaran / KPI
+    Route::get('/admin/risk-register/periode/{periode}', [RiskRegisterController::class, 'sasaran'])
+        ->name('risk.sasaran');
+    Route::post('/admin/risk-register/sasaran', [RiskRegisterController::class, 'createSasaran'])
+        ->name('risk.sasaran.store');
+    Route::put('/admin/risk-register/sasaran/{sasaran}', [RiskRegisterController::class, 'updateSasaran'])
+        ->name('risk.sasaran.update');
+    Route::delete('/admin/risk-register/sasaran/{sasaran}', [RiskRegisterController::class, 'deleteSasaran'])
+        ->name('risk.sasaran.destroy');
+
+    // Detail Risiko
+    Route::get('/admin/risk-register/sasaran/{sasaran}', [RiskRegisterController::class, 'detail'])
+        ->name('risk.detail');
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/periode', [PeriodeController::class, 'create'])->name('admin.periode');
+    Route::post('/admin/periode', [PeriodeController::class, 'store'])->name('periode.store');
+    Route::put('/admin/periode/{periode}', [PeriodeController::class, 'update'])->name('periode.update');
+    Route::delete('/admin/periode/{periode}', [PeriodeController::class, 'destroy'])->name('periode.destroy');
 });

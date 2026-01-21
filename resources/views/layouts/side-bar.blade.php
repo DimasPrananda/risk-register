@@ -15,7 +15,10 @@
     <x-side-link :href="route('admin.kategori')" :active="request()->routeIs('admin.kategori')">
         <img src="{{ asset('icons/categorize.svg') }}" height="50" alt="Icon categorize">
     </x-side-link>
-    <x-side-link :href="route('admin.risk-register')" :active="request()->routeIs('admin.risk-register')">
+    <x-side-link :href="route('admin.periode')" :active="request()->routeIs('admin.periode')">
+        <img src="{{ asset('icons/timesheet.svg') }}" height="50" alt="Icon timesheet">
+    </x-side-link>
+    <x-side-link :href="route('risk.pilih-periode')" :active="request()->routeIs('risk.pilih-periode')">
         <img src="{{ asset('icons/checklist.svg') }}" height="50" alt="Icon checklist">
     </x-side-link>
 </div>
