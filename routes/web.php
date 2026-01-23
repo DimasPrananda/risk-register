@@ -70,6 +70,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Detail Risiko
     Route::get('/admin/risk-register/sasaran/{sasaran}', [RiskRegisterController::class, 'detail'])
         ->name('risk.detail');
+    Route::post('/admin/risk-register/sebab-risiko/{sasaran}', [RiskRegisterController::class, 'createSebabRisiko'])
+        ->name('risk.detail.store');
+    Route::put('/admin/risk-register/sebab-risiko/{sasaran}', [RiskRegisterController::class, 'updateSebabRisiko'])
+        ->name('risk.detail.update');
+    Route::delete('/admin/risk-register/sebab-risiko/{sasaran}', [RiskRegisterController::class, 'deleteSebabRisiko'])
+        ->name('risk.detail.destroy');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {

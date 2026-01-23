@@ -66,6 +66,19 @@
                                                                 </x-slot>
 
                                                                 <x-slot name="content">
+                                                                    <x-dropdown-link
+                                                                        href="#"
+                                                                        @click.prevent="
+                                                                            showModal = true;
+                                                                            sasaran.id = {{ $sasaran->id }};
+                                                                            sasaran.nama_sasaran = '{{ $sasaran->nama_sasaran }}';
+                                                                            sasaran.target = '{{ $sasaran->target }}';
+                                                                            sasaran.risiko = '{{ $sasaran->risiko }}';
+                                                                            sasaran.dampak = '{{ $sasaran->dampak }}';
+                                                                            sasaran.departemen_id = {{ $sasaran->departemen_id }};
+                                                                        ">
+                                                                        Edit
+                                                                    </x-dropdown-link>
                                                                     <form method="POST" action="{{ route('risk.sasaran.destroy', $sasaran) }}">
                                                                         @csrf
                                                                         @method('DELETE')
@@ -95,9 +108,9 @@
                                                         </h3>
                                                     </div>
                                                     <div class=" mt-auto flex items-end">
-                                                        <x-secondary-button href="{{ route('risk.detail', $sasaran) }}"
+                                                        <x-secondary-button onclick="window.location='{{ route('risk.detail', $sasaran) }}'"
                                                             class="text-blue-600 dark:text-blue-400 w-full justify-center">
-                                                            Lihat Detail                                                        
+                                                            Lihat Detail                                                     
                                                         </x-secondary-button>
                                                     </div>
                                                 </div>
@@ -114,10 +127,18 @@
             </div>
             <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click.self="showModal = false">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-11/12 md:w-1/3">
-                    <h2 class="text-lg font-bold mb-4 text-gray-800 dark:text-white">Tambahkan Sasaran</h2>
+                    <h2 class="text-lg font-bold mb-4 text-gray-800 dark:text-white" x-text="sasaran.id ? 'Edit Sasaran' : 'Tambah Sasaran'"></h2>
 
-                    <form action="{{ route('risk.sasaran.store') }}" method="POST">
-                        @csrf
+                    <form :action="sasaran.id 
+                        ? '{{ url('/admin/risk-register/sasaran') }}/' + sasaran.id 
+                        : '{{ route('risk.sasaran.store') }}'"
+                    method="POST">
+
+                    @csrf
+
+                    <template x-if="sasaran.id">
+                        <input type="hidden" name="_method" value="PUT">
+                    </template>
                         <div class="mb-4">
                             <input type="hidden" name="periode_id" value="{{ $periode->id }}">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -125,6 +146,7 @@
                             </label>
                             <input type="text"
                                     name="nama_sasaran"
+                                    x-model="sasaran.nama_sasaran"
                                     class="mt-1 block w-full rounded-md border-gray-300
                                             dark:bg-gray-700 dark:text-gray-200"
                                     required>
@@ -136,6 +158,7 @@
                             </label>
                             <input type="text"
                                     name="target"
+                                    x-model="sasaran.target"
                                     class="mt-1 block w-full rounded-md border-gray-300
                                             dark:bg-gray-700 dark:text-gray-200"
                                     required>
@@ -147,6 +170,7 @@
                             </label>
                             <input type="text"
                                     name="risiko"
+                                    x-model="sasaran.risiko"
                                     class="mt-1 block w-full rounded-md border-gray-300
                                             dark:bg-gray-700 dark:text-gray-200"
                                     required>
@@ -158,6 +182,7 @@
                             </label>
                             <input type="text"
                                     name="dampak"
+                                    x-model="sasaran.dampak"
                                     class="mt-1 block w-full rounded-md border-gray-300
                                             dark:bg-gray-700 dark:text-gray-200"
                                     required>
@@ -168,6 +193,7 @@
                                 Departemen
                             </label>
                             <select name="departemen_id"
+                                    x-model="sasaran.departemen_id"
                                     class="mt-1 block w-full rounded-md border-gray-300
                                         dark:bg-gray-700 dark:text-gray-200"
                                     required>
@@ -182,8 +208,8 @@
 
                         <div class="flex justify-end">
                             <button type="submit"
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-                                Simpan Sasaran
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded" x-text="sasaran.id ? 'Update Sasaran' : 'Simpan Sasaran'">
+                                
                             </button>
                         </div>
                     </form>
