@@ -17,4 +17,9 @@ class SebabRisiko extends Model
     {
         return $this->hasMany(PerlakuanRisiko::class);
     }
+
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class);
+    }
 }
