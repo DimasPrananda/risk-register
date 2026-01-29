@@ -10,7 +10,7 @@
         </h2>
 
         <form method="POST"
-            action="{{ route('risk.perlakuan-risiko.update', $item->id) }}">
+            action="{{ route('risk.perlakuan-risiko.update', $item->id) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -63,6 +63,20 @@
                         value="{{ $perlakuan->probabilitas }}"
                         class="mt-1 block w-full rounded-md border-gray-300
                         dark:bg-gray-700 dark:text-gray-200">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Dokumen Pendukung (PDF, max 5MB)
+                    </label>
+                    <input type="file"
+                        name="dokumen_pdf"
+                        accept="application/pdf"
+                        class="mt-1 block w-full text-sm text-gray-700
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-md file:border-0
+                            file:bg-blue-600 file:text-white
+                            hover:file:bg-blue-700"/>
                 </div>
             </div>
 

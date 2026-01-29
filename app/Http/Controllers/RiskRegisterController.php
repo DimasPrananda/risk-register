@@ -8,6 +8,7 @@ use App\Models\Periode;
 use App\Models\Sasaran;
 use App\Models\SebabRisiko;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class RiskRegisterController extends Controller
 {
@@ -237,10 +238,11 @@ class RiskRegisterController extends Controller
             'periode' => 'required|in:Bulanan,Triwulan,Semester,Tahunan',
             'dokumen_pdf' => 'nullable|file|mimes:pdf|max:5120'
         ]);
-
-        $path = null;
+        
         if ($request->hasFile('dokumen_pdf')) {
             $path = $request->file('dokumen_pdf')->store('perlakuan_risiko', 'public');
+
+            $data['dokumen_pdf'] = $path; 
         }
 
         $sebab_risiko->perlakuanRisikos()->create([
@@ -262,17 +264,39 @@ class RiskRegisterController extends Controller
             'dampak' => 'nullable|integer',
             'probabilitas' => 'nullable|integer',
             'periode' => 'required|in:Bulanan,Triwulan,Semester,Tahunan',
+            'dokumen_pdf' => 'nullable|file|mimes:pdf|max:5120'
         ]);
 
-        $perlakuanRisiko = $sebab_risiko->perlakuanRisikos()->findOrFail($request->perlakuan_risiko_id);
-        $perlakuanRisiko->update([
+        $perlakuanRisiko = $sebab_risiko
+            ->perlakuanRisikos()
+            ->findOrFail($request->perlakuan_risiko_id);
+
+        $data = [
             'perlakuan_risiko' => $request->perlakuan_risiko,
             'dampak' => $request->dampak,
             'probabilitas' => $request->probabilitas,
             'periode' => $request->periode,
-        ]);
+        ];
 
-        return redirect()->route('risk.detail', $sebab_risiko->sasaran_id)->with('success', 'Perlakuan risiko berhasil diperbarui.');
+        // Jika upload file baru
+        if ($request->hasFile('dokumen_pdf')) {
+
+            // hapus file lama jika ada
+            if ($perlakuanRisiko->dokumen_pdf &&
+                Storage::disk('public')->exists($perlakuanRisiko->dokumen_pdf)) {
+                Storage::disk('public')->delete($perlakuanRisiko->dokumen_pdf);
+            }
+
+            // simpan file baru
+            $data['dokumen_pdf'] = $request->file('dokumen_pdf')
+                                            ->store('perlakuan_risiko', 'public');
+        }
+
+        $perlakuanRisiko->update($data);
+
+        return redirect()
+            ->route('risk.detail', $sebab_risiko->sasaran_id)
+            ->with('success', 'Perlakuan risiko berhasil diperbarui.');
     }
 
     public function deletePerlakuanRisiko(Request $request, SebabRisiko $sebab_risiko)
