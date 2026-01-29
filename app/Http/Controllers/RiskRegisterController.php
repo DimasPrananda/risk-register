@@ -6,6 +6,7 @@ use App\Models\Departemen;
 use App\Models\Kategori;
 use App\Models\Periode;
 use App\Models\Sasaran;
+use App\Models\SebabRisiko;
 use Illuminate\Http\Request;
 
 class RiskRegisterController extends Controller
@@ -138,6 +139,20 @@ class RiskRegisterController extends Controller
                 $item->skala_risiko = null;
                 $item->level_risiko = '-';
             }
+            
+            $item->perlakuanRisikos->each(function ($perlakuan) use ($riskMatrix) {
+
+                $c2 = $perlakuan->dampak;
+                $l2 = $perlakuan->probabilitas;
+
+                if ($c2 && $l2 && isset($riskMatrix[$l2][$c2])) {
+                    $perlakuan->skala_risiko = $riskMatrix[$l2][$c2]['nilai'];
+                    $perlakuan->level_risiko = $riskMatrix[$l2][$c2]['level'];
+                } else {
+                    $perlakuan->skala_risiko = null;
+                    $perlakuan->level_risiko = '-';
+                }
+            });
         });
 
         // 4️⃣ KIRIM KE VIEW
@@ -211,5 +226,65 @@ class RiskRegisterController extends Controller
         $sebabRisiko->delete();
 
         return redirect()->route('risk.detail', $sasaran->id)->with('success', 'Sebab risiko berhasil dihapus.');
+    }  
+    
+    public function createPerlakuanRisiko(Request $request, SebabRisiko $sebab_risiko)
+    {
+        $request->validate([
+            'perlakuan_risiko' => 'required|string',
+            'dampak' => 'nullable|integer',
+            'probabilitas' => 'nullable|integer',
+            'periode' => 'required|in:Bulanan,Triwulan,Semester,Tahunan',
+            'dokumen_pdf' => 'nullable|file|mimes:pdf|max:5120'
+        ]);
+
+        $path = null;
+        if ($request->hasFile('dokumen_pdf')) {
+            $path = $request->file('dokumen_pdf')->store('perlakuan_risiko', 'public');
+        }
+
+        $sebab_risiko->perlakuanRisikos()->create([
+            'perlakuan_risiko' => $request->perlakuan_risiko,
+            'dampak' => $request->dampak,
+            'probabilitas' => $request->probabilitas,
+            'periode' => $request->periode,
+            'dokumen_pdf' => $path,
+        ]);
+
+        return redirect()->route('risk.detail', $sebab_risiko->sasaran_id)->with('success', 'Perlakuan risiko berhasil ditambahkan.');
+    }
+
+    public function updatePerlakuanRisiko(Request $request, SebabRisiko $sebab_risiko)
+    {
+        $request->validate([
+            'perlakuan_risiko_id' => 'required|exists:perlakuan_risikos,id',
+            'perlakuan_risiko' => 'required|string',
+            'dampak' => 'nullable|integer',
+            'probabilitas' => 'nullable|integer',
+            'periode' => 'required|in:Bulanan,Triwulan,Semester,Tahunan',
+        ]);
+
+        $perlakuanRisiko = $sebab_risiko->perlakuanRisikos()->findOrFail($request->perlakuan_risiko_id);
+        $perlakuanRisiko->update([
+            'perlakuan_risiko' => $request->perlakuan_risiko,
+            'dampak' => $request->dampak,
+            'probabilitas' => $request->probabilitas,
+            'periode' => $request->periode,
+        ]);
+
+        return redirect()->route('risk.detail', $sebab_risiko->sasaran_id)->with('success', 'Perlakuan risiko berhasil diperbarui.');
+    }
+
+    public function deletePerlakuanRisiko(Request $request, SebabRisiko $sebab_risiko)
+    {
+        $request->validate([
+            'perlakuan_risiko_id' => 'required|exists:perlakuan_risikos,id',
+        ]);
+
+        $perlakuanRisiko = $sebab_risiko->perlakuanRisikos()->findOrFail($request->perlakuan_risiko_id);
+        $sasaranId = $sebab_risiko->sasaran_id;
+        $perlakuanRisiko->delete();
+
+        return redirect()->route('risk.detail', $sasaranId)->with('success', 'Perlakuan risiko berhasil dihapus.');
     }   
 }

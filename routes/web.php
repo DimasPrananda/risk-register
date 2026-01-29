@@ -76,6 +76,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('risk.detail.update');
     Route::delete('/admin/risk-register/sebab-risiko/{sasaran}', [RiskRegisterController::class, 'deleteSebabRisiko'])
         ->name('risk.detail.destroy');
+
+    // Perlakuan Risiko
+    Route::post('/admin/risk-register/perlakuan-risiko/{sebab_risiko}', [RiskRegisterController::class, 'createPerlakuanRisiko'])
+        ->name('risk.perlakuan-risiko.store');
+    Route::put('/admin/risk-register/perlakuan-risiko/{sebab_risiko}', [RiskRegisterController::class, 'updatePerlakuanRisiko'])
+        ->name('risk.perlakuan-risiko.update');
+    Route::delete('/admin/risk-register/perlakuan-risiko/{sebab_risiko}', [RiskRegisterController::class, 'deletePerlakuanRisiko'])
+        ->name('risk.perlakuan-risiko.destroy');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {

@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sebab_risiko_id')->constrained()->onDelete('cascade');
             $table->text('perlakuan_risiko');
+            $table->integer('dampak')->nullable();
+            $table->integer('probabilitas')->nullable();
+            $table->string('periode');
+            $table->string('dokumen_pdf')->nullable();
             $table->timestamps();
         });
     }

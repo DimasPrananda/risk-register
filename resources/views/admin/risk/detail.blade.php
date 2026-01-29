@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div x-data="{ open: false, showModal: false, editId: null, selected: null, sebab_risiko: { id: null, nama_sebab: '', pengendalian_internal: '', referensi_pengendalian: '', efektifitas_pengendalian: '', dampak: '', probabilitas: '', kategori_id: '' } }">
+    <div x-data="{ open: false, openSebabId: null, showModal: false, addPerlakuanId: null, editPerlakuanId: null, editId: null, selected: null, sebab_risiko: { id: null, nama_sebab: '', pengendalian_internal: '', referensi_pengendalian: '', efektifitas_pengendalian: '', dampak: '', probabilitas: '', kategori_id: '' } }">
         <x-slot name="header">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Halaman Detail Sasaran') }}
@@ -72,9 +72,10 @@
             @if($sasaran->sebabRisikos->count())
                 @foreach($sasaran->sebabRisikos as $item)
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm mb-4 sm:rounded-lg p-6">
-                        <div class="flex justify-between items-start font-semibold text-xl gap-2">
+                        <div class="flex justify-between items-start font-semibold text-xl gap-2 cursor-pointer"
+                            @click="openSebabId = openSebabId === {{ $item->id }} ? openSebabId = null : openSebabId = {{ $item->id }}">
                             <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-gray-800 dark:text-gray-200 text-xl">{{ $item->nama_sebab }}</p>
+                                <p class="font-semibold text-gray-800 dark:text-gray-200 text-xl">{{ $item->nama_sebab }}</p>                                
                             </div>
                             <div class="shrink-0">
                                 <x-dropdown>
@@ -106,195 +107,179 @@
                                 </x-dropdown>
                             </div>
                         </div>
-                        <p class="text-sm">
-                            <span class="font-medium text-gray-700 dark:text-gray-300">
-                                Pengendalian Internal:
-                            </span>
-                            <span class="text-gray-500 dark:text-gray-400">
-                                {{ $item->pengendalian_internal }}
-                            </span>
-                        </p>
+                        <div x-show="openSebabId === {{ $item->id }}"
+                            x-collapse
+                            x-cloak
+                            class="mt-4">
 
-                        <p class="text-sm">
-                            <span class="font-medium text-gray-700 dark:text-gray-300">
-                                Kategori Risiko:
-                            </span>
-                            <span class="text-gray-500 dark:text-gray-400">
-                                {{ $item->kategori->nama_kategori }}
-                            </span>
-                        </p>
+                            <p class=" font-semibold">
+                                <span class=" text-gray-700 dark:text-gray-300">
+                                    Pengendalian Internal:
+                                </span>
+                                <span class="text-gray-500 dark:text-gray-400">
+                                    {{ $item->pengendalian_internal }}
+                                </span>
+                            </p>
 
-                        <p class="text-sm">
-                            <span class="font-medium text-gray-700 dark:text-gray-300">
-                                Referensi:
-                            </span>
-                            <span class="text-gray-500 dark:text-gray-400">
-                                {{ $item->referensi_pengendalian }}
-                            </span>
-                        </p>
+                            <p class=" font-semibold">
+                                <span class=" text-gray-700 dark:text-gray-300">
+                                    Kategori Risiko:
+                                </span>
+                                <span class="text-gray-500 dark:text-gray-400">
+                                    {{ $item->kategori->nama_kategori }}
+                                </span>
+                            </p>
 
-                        <p class="text-sm">
-                            <span class="font-medium text-gray-700 dark:text-gray-300">
-                                Efektifitas:
-                            </span>
-                            <span class="text-gray-500 dark:text-gray-400">
-                                {{ $item->efektifitas_pengendalian }}
-                            </span>
-                        </p>
-                        <div class="overflow-x-auto">
-                            <table class="w-full border border-gray-400 text-sm text-center">
-                                <thead>
-                                    <tr>
-                                        <th colspan="4"
-                                            class="border border-gray-400 px-4 py-2 font-semibold bg-gray-100 dark:bg-gray-700 dark:text-gray-200">
-                                            Target Tingkat Risiko Inherent (TR Inherent)
-                                        </th>
-                                    </tr>
-                                    <tr class="bg-gray-50 dark:bg-gray-800">
-                                        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Dampak</th>
-                                        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Probabilitas</th>
-                                        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Skala Risiko</th>
-                                        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Level Risiko</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white dark:bg-gray-900 dark:text-gray-200">
-                                    <tr>
-                                        <td class="border border-gray-400 px-4 py-2 text-center">
-                                            {{ $item['dampak'] ?? '-' }}
-                                        </td>
+                            <p class=" font-semibold">
+                                <span class=" text-gray-700 dark:text-gray-300">
+                                    Referensi:
+                                </span>
+                                <span class="text-gray-500 dark:text-gray-400">
+                                    {{ $item->referensi_pengendalian }}
+                                </span>
+                            </p>
 
-                                        <td class="border border-gray-400 px-4 py-2 text-center">
-                                            {{ $item['probabilitas'] ?? '-' }}
-                                        </td>
+                            <p class=" font-semibold">
+                                <span class=" text-gray-700 dark:text-gray-300">
+                                    Efektifitas:
+                                </span>
+                                <span class="text-gray-500 dark:text-gray-400">
+                                    {{ $item->efektifitas_pengendalian }}
+                                </span>
+                            </p>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border border-gray-400 text-sm text-center">
+                                    @include('admin.risk.partials.table-risiko', [
+                                        'item' => [
+                                            'dampak' => $item->dampak,
+                                            'probabilitas' => $item->probabilitas,
+                                            'skala_risiko' => $item->skala_risiko,
+                                            'level_risiko' => $item->level_risiko,
+                                        ]
+                                    ])
+                                </table>
+                            </div>
+                            @if($item->perlakuanRisikos->count())
+                            <div class="mt-4 p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700">
+                                <p class="font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                    Perlakuan Risiko
+                                </p>
 
-                                        <td class="border border-gray-400 px-4 py-2 text-center font-semibold">
-                                            {{ $item['skala_risiko'] ?? '-' }}
-                                        </td>
+                                @foreach($item->perlakuanRisikos as $perlakuan)
+                                    <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-3 bg-gray-50 dark:bg-gray-800">
+                                        
+                                        <div class="flex justify-between">
+                                            <p class="font-semibold text-gray-800 dark:text-gray-200">
+                                                <span class="font-medium text-gray-700 dark:text-gray-300">
+                                                    Perlakuan Risiko:
+                                                </span>
+                                                <span class="text-gray-500 dark:text-gray-400">
+                                                    {{ $perlakuan->perlakuan_risiko }}
+                                                </span>
+                                            </p>
 
-                                        <td class="border border-gray-400 px-4 py-2 text-center font-semibold">
-                                            @if($item['level_risiko'] === 'High')
-                                                <span class="flex flex-1 justify-center rounded-lg bg-red-600 text-white">{{ $item['level_risiko'] }}</span>
-                                            @elseif($item['level_risiko'] === 'Moderate to High')
-                                                <span class="flex flex-1 justify-center rounded-lg bg-orange-500 text-white">{{ $item['level_risiko'] }}</span>
-                                            @elseif($item['level_risiko'] === 'Moderate')
-                                                <span class="flex flex-1 justify-center rounded-lg bg-yellow-500 text-white">{{ $item['level_risiko'] }}</span>
-                                            @elseif($item['level_risiko'] === 'Low to Moderate')
-                                                <span class="flex flex-1 justify-center rounded-lg bg-green-500 text-white">{{ $item['level_risiko'] }}</span>
-                                            @elseif($item['level_risiko'] === 'Low')
-                                                <span class="flex flex-1 justify-center rounded-lg bg-green-700 text-white">{{ $item['level_risiko'] }}</span>
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div x-show="editId === {{ $item->id }}"
-                        x-transition
-                        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-                        @click.self="editId = null">
+                                            <div class="shrink-0">
+                                                <x-dropdown>
+                                                    <x-slot name="trigger">
+                                                        <button class="p-1">
+                                                            <img src="{{ asset('icons/menu_vertical.svg') }}"
+                                                                class="w-4 h-4"
+                                                                alt="Icon menu vertical">
+                                                        </button>
+                                                    </x-slot>
 
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-2xl p-6">
+                                                    <x-slot name="content">
+                                                        <x-dropdown-link @click="editPerlakuanId = {{ $perlakuan->id }}">
+                                                            Edit
+                                                        </x-dropdown-link>
+                                                        <form method="POST" action="{{ route('risk.perlakuan-risiko.destroy', $item->id) }}">
+                                                            @csrf
+                                                            @method('DELETE')
 
-                            <h2 class="text-lg font-bold mb-4 text-gray-800 dark:text-white">
-                                Edit Sebab Risiko
-                            </h2>
+                                                            <input type="hidden" name="perlakuan_risiko_id" value="{{ $perlakuan->id }}">
 
-                            <form action="{{ route('risk.detail.update', $sasaran->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
+                                                            <x-dropdown-link
+                                                                href="#"
+                                                                onclick="event.preventDefault(); this.closest('form').submit();">
+                                                                Hapus
+                                                            </x-dropdown-link>
+                                                        </form>
+                                                    </x-slot>
+                                                </x-dropdown>
+                                            </div>
+                                        </div>
+                                        
 
-                                <input type="hidden" name="sebab_risiko_id" value="{{ $item->id }}">
-                                
-                                <!-- SASARAN -->
-                                <input type="hidden" name="sasaran_id" value="{{ $sasaran->id }}">
+                                        <p class="font-semibold text-gray-800 dark:text-gray-200">
+                                            <span class="font-medium text-gray-700 dark:text-gray-300">
+                                                Jadwal Mitigasi:
+                                            </span>                                        
+                                        </p>
 
-                                <!-- KATEGORI -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Kategori Risiko</label>
-                                    <select name="kategori_id" class="mt-1 block w-full rounded-md border-gray-300
-                                    dark:bg-gray-700 dark:text-gray-200" required>
-                                        @foreach($kategoris as $kategori)
-                                            <option value="{{ $kategori->id }}"
-                                                @selected($kategori->id == $item->kategori_id)>
-                                                {{ $kategori->nama_kategori }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                                        <div class=" flex gap-4">
+                                            <p class="font-semibold text-gray-800 dark:text-gray-200">
+                                                <span class="font-medium text-gray-700 dark:text-gray-300">
+                                                    Periode:
+                                                </span>  
+                                                <span class=" font-semibold text-gray-400">
+                                                    {{ $perlakuan->periode }}   
+                                                </span>                                      
+                                            </p>
+                                            <p class="font-semibold text-gray-800 dark:text-gray-200">
+                                                <span class="font-medium text-gray-700 dark:text-gray-300">
+                                                    Tanggal: 
+                                                </span> 
+                                                <span class=" font-normal text-gray-400 text-sm">
+                                                    {{ $perlakuan->created_at->format('d/m/Y') }}                                       
+                                                </span>
+                                            </p>
+                                        </div>
 
-                                <!-- SEBAB -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Sebab Risiko</label>
-                                    <textarea name="nama_sebab" rows="2" class="mt-1 block w-full rounded-md border-gray-300
-                                        dark:bg-gray-700 dark:text-gray-200" required>
-                                        {{ $item->nama_sebab }}</textarea>
-                                </div>
-
-                                <!-- PENGENDALIAN -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Pengendalian Internal</label>
-                                    <textarea name="pengendalian_internal" rows="2" class="mt-1 block w-full rounded-md border-gray-300
-                                        dark:bg-gray-700 dark:text-gray-200" required>
-                                        {{ $item->pengendalian_internal }}</textarea>
-                                </div>
-
-                                <!-- REFERENSI -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Referensi Pengendalian</label>
-                                    <input type="text" name="referensi_pengendalian"
-                                        value="{{ $item->referensi_pengendalian }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300
-                                        dark:bg-gray-700 dark:text-gray-200" required>
-                                </div>
-
-                                <!-- EFEKTIFITAS -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Efektifitas</label>
-                                    <select name="efektifitas_pengendalian" class="mt-1 block w-full rounded-md border-gray-300
-                                        dark:bg-gray-700 dark:text-gray-200" required>
-                                        <option value="Efektif" @selected($item->efektifitas_pengendalian=='Efektif')>Efektif</option>
-                                        <option value="Kurang Efektif" @selected($item->efektifitas_pengendalian=='Kurang Efektif')>Kurang Efektif</option>
-                                        <option value="Tidak Efektif" @selected($item->efektifitas_pengendalian=='Tidak Efektif')>Tidak Efektif</option>
-                                    </select>
-                                </div>
-
-                                <!-- DAMPAK & PROBABILITAS -->
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Dampak</label>
-                                        <input type="number" name="dampak" min="1" max="5"
-                                            value="{{ $item->dampak }}" class="mt-1 block w-full rounded-md border-gray-300
-                                        dark:bg-gray-700 dark:text-gray-200">
+                                        <div class="overflow-x-auto mt-2">
+                                            <table class="w-full border border-gray-400 text-sm text-center">
+                                                @include('admin.risk.partials.table-perlakuan', [
+                                                    'dampak' => $perlakuan->dampak,
+                                                    'probabilitas' => $perlakuan->probabilitas,
+                                                    'skala_risiko' => $perlakuan->skala_risiko,
+                                                    'level_risiko' => $perlakuan->level_risiko,
+                                                ])
+                                            </table>
+                                        </div>
+                                        @if($perlakuan->dokumen_pdf)
+                                            <a href="{{ asset('storage/'.$perlakuan->dokumen_pdf) }}"
+                                            target="_blank"
+                                            class="text-blue-600 underline text-sm">
+                                                Lihat Dokumen (PDF)
+                                            </a>
+                                        @endif
                                     </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Probabilitas</label>
-                                        <input type="number" name="probabilitas" min="1" max="5"
-                                            value="{{ $item->probabilitas }}" class="mt-1 block w-full rounded-md border-gray-300
-                                        dark:bg-gray-700 dark:text-gray-200">
-                                    </div>
+                                    @include('admin.risk.partials.modal-edit-perlakuan', [
+                                        'perlakuan' => $perlakuan,
+                                        'item' => $item
+                                    ])
+                                    @endforeach
                                 </div>
-
-                                <!-- ACTION -->
-                                <div class="mt-6 flex justify-end gap-2">
-                                    <button type="button"
-                                            @click="editId = null"
-                                            class="px-4 py-2 rounded bg-gray-300">
-                                        Batal
-                                    </button>
-
-                                    <button type="submit"
-                                            class="px-4 py-2 rounded bg-blue-600 text-white">
-                                        Update
-                                    </button>
-                                </div>
-
-                            </form>
+                                @else
+                                <p class="flex mt-4 text-gray-400 justify-center text-sm">Belum ada perlakuan risiko</p>
+                                @endif
+                            <div>
+                                <x-primary-button
+                                    class=" mt-4"
+                                    @click="addPerlakuanId = {{ $item->id }};">
+                                    Tambah Perlakuan
+                                </x-primary-button>
+                            </div>
                         </div>
+                        
                     </div>
+                    @include('admin.risk.partials.modal-edit-risiko', [
+                        'sasaran' => $sasaran,
+                        'kategoris' => $kategoris,
+                        'item' => $item
+                    ])
+                    @include('admin.risk.partials.modal-create-perlakuan', [
+                        'item' => $item
+                    ])            
                 @endforeach
             @else
                 <p class="text-gray-400 text-sm">Belum ada sebab risiko</p>
@@ -302,134 +287,9 @@
             
         </div>
         
-        <div x-show="showModal"
-            x-transition
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-            @click.self="showModal = false">
-    
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-2xl p-6">
-    
-                <h2 class="text-lg font-bold mb-4 text-gray-800 dark:text-white">
-                    Tambah Sebab Risiko
-                </h2>
-    
-                 <form action="{{ route('risk.detail.store', $sasaran) }}" method="POST">  
-                    @csrf
-    
-                    <!-- SASARAN -->
-                    <input type="hidden" name="sasaran_id" value="{{ $sasaran->id }}">
-    
-                    <!-- KATEGORI -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Kategori Risiko
-                        </label>
-                        <select name="kategori_id"                                
-                                class="mt-1 block w-full rounded-md border-gray-300
-                                    dark:bg-gray-700 dark:text-gray-200"
-                                required>
-                            <option value="">-- Pilih Kategori --</option>
-                            @foreach($kategoris as $kategori)
-                                <option value="{{ $kategori->id }}">
-                                    {{ $kategori->nama_kategori }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-    
-                    <!-- NAMA SEBAB -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Sebab Risiko
-                        </label>
-                        <textarea name="nama_sebab"
-                                rows="2"
-                                class="mt-1 block w-full rounded-md border-gray-300
-                                        dark:bg-gray-700 dark:text-gray-200"
-                                required></textarea>
-                    </div>
-    
-                    <!-- PENGENDALIAN INTERNAL -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Pengendalian Internal
-                        </label>
-                        <textarea name="pengendalian_internal"
-                                rows="2"
-                                class="mt-1 block w-full rounded-md border-gray-300
-                                        dark:bg-gray-700 dark:text-gray-200"
-                                required></textarea>
-                    </div>
-    
-                    <!-- REFERENSI -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Referensi Pengendalian
-                        </label>
-                        <input type="text"
-                            name="referensi_pengendalian"
-                            class="mt-1 block w-full rounded-md border-gray-300
-                                    dark:bg-gray-700 dark:text-gray-200"
-                            required>
-                    </div>
-    
-                    <!-- EFEKTIFITAS -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                            Efektifitas Pengendalian
-                        </label>
-                        <select name="efektifitas_pengendalian"
-                                class="mt-1 block w-full rounded-md border-gray-300
-                                    dark:bg-gray-700 dark:text-gray-200"
-                                required>
-                            <option value="">-- Pilih --</option>
-                            <option value="Efektif">Efektif</option>
-                            <option value="Kurang Efektif">Kurang Efektif</option>
-                            <option value="Tidak Efektif">Tidak Efektif</option>
-                        </select>
-                    </div>
-    
-                    <!-- DAMPAK & PROBABILITAS -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                                Dampak
-                            </label>
-                            <input type="number"
-                                name="dampak"
-                                min="1" max="5"
-                                class="mt-1 block w-full rounded-md border-gray-300
-                                        dark:bg-gray-700 dark:text-gray-200">
-                        </div>
-    
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                                Probabilitas
-                            </label>
-                            <input type="number"
-                                name="probabilitas"
-                                min="1" max="5"
-                                class="mt-1 block w-full rounded-md border-gray-300
-                                        dark:bg-gray-700 dark:text-gray-200">
-                        </div>
-                    </div>
-    
-                    <!-- ACTION -->
-                    <div class="mt-6 flex justify-end gap-2">
-                        <button type="button"
-                                @click="showModal = false"
-                                class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">
-                            Batal
-                        </button>
-    
-                        <button type="submit"
-                                class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white">
-                            Simpan
-                        </button>
-                    </div>
-    
-                </form>
-            </div>
-        </div>
+        @include('admin.risk.partials.modal-create-risiko', [
+            'sasaran' => $sasaran,
+            'kategoris' => $kategoris
+        ])
     </div>
 </x-app-layout>
