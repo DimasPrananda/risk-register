@@ -119,7 +119,8 @@
                 </button>
 
                 <button type="submit"
-                        class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white">
+                        class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white"
+                        onclick="showModal = false">
                     Simpan
                 </button>
             </div>    

@@ -1,5 +1,5 @@
 @if(Auth::user()->usertype === 'admin' || Auth::user()->usertype === 'manager')
-<div class=" h-full w-20 dark:bg-gray-800 ">
+<div class=" fixed inset-y-0 left-0 z-40 w-20 dark:bg-gray-800 ">
     <div class=" p-4">
         <img src="{{ asset('images/utsg.png') }}" height="50" alt="Logo UTSG">
     </div>

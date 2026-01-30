@@ -72,10 +72,22 @@
             @if($sasaran->sebabRisikos->count())
                 @foreach($sasaran->sebabRisikos as $item)
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm mb-4 sm:rounded-lg p-6">
-                        <div class="flex justify-between items-start font-semibold text-xl gap-2 cursor-pointer"
-                            @click="openSebabId = openSebabId === {{ $item->id }} ? openSebabId = null : openSebabId = {{ $item->id }}">
+                        <div class="flex justify-between items-start font-semibold text-xl gap-2 
+                            cursor-pointer
+                            hover:bg-gray-100 dark:hover:bg-gray-700
+                            hover:shadow
+                            rounded-lg
+                            transition
+                            p-2 -m-2"
+                            @click="openSebabId = openSebabId === {{ $item->id }} ? openSebabId = null : openSebabId = {{ $item->id }}"
+                                x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0 -translate-y-2"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-200"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 -translate-y-2">
                             <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-gray-800 dark:text-gray-200 text-xl">{{ $item->nama_sebab }}</p>                                
+                                <p class="font-semibold text-gray-800 dark:text-gray-200 text-xl">{{ $loop->iteration }}. {{ $item->nama_sebab }}</p>                                
                             </div>
                             <div class="shrink-0">
                                 <x-dropdown>
