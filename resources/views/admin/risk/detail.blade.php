@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div x-data="{ open: false, openSebabId: null, showModal: false, addPerlakuanId: null, editPerlakuanId: null, editId: null, selected: null, sebab_risiko: { id: null, nama_sebab: '', pengendalian_internal: '', referensi_pengendalian: '', efektifitas_pengendalian: '', dampak: '', probabilitas: '', kategori_id: '' } }">
+    <div x-data="{ open: false, openSebabId: null, showModal: false, addPerlakuanId: null, editPerlakuanId: null, editId: null, selected: null, sebab_risiko: { id: null, nama_sebab: '', pengendalian_internal: '', referensi_pengendalian: '', efektifitas_pengendalian: '', dampak: '', probabilitas: '', kategori_id: '' } }" class=" ml-20">
         <x-slot name="header">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Halaman Detail Sasaran') }}
@@ -54,20 +54,52 @@
                     </div>
                 </div>
             </div>
-            <div class=" text-right my-5">
-                <x-primary-button @click="
-                    showModal = true;
-                    sebab_risiko.id = null;
-                    sebab_risiko.nama_sebab = '';
-                    sebab_risiko.pengendalian_internal = '';
-                    sebab_risiko.referensi_pengendalian = '';
-                    sebab_risiko.efektifitas_pengendalian = '';
-                    sebab_risiko.dampak = '';
-                    sebab_risiko.probabilitas = '';
-                    sebab_risiko.kategori_id = '';
-                    ">
-                    Tambah Sebab Risiko
-                </x-primary-button>
+            <div class=" text-right my-5 flex justify-end gap-3">
+                @if(!$sasaran->is_published)
+                    <form method="POST" action="{{ route('sasaran.publish', $sasaran->id) }}"
+                        onsubmit="return confirm('Yakin publish sasaran ini? Data akan tampil di dashboard.')">
+                        @csrf
+                        <x-primary-button class="bg-green-600 hover:bg-green-700">
+                            Publish Sasaran
+                        </x-primary-button>
+                    </form>
+                @else
+                    <span class="inline-flex items-center px-4 py-2
+                        bg-green-100 text-green-700 rounded-md text-sm font-semibold">
+                        ✅ Published
+                    </span>
+
+                    {{-- Opsional --}}
+                    <form method="POST" action="{{ route('sasaran.unpublish', $sasaran->id) }}">
+                        @csrf
+                        <x-secondary-button type="submit">
+                            Unpublish
+                        </x-secondary-button>
+                    </form>
+                @endif
+                @if($sasaran->is_published)
+                    <x-primary-button
+                        disabled
+                        class="opacity-50 cursor-not-allowed"
+                        title="Sasaran sudah dipublish, tidak bisa menambah risiko">
+                        Tambah Sebab Risiko
+                    </x-primary-button>
+                @else
+                    <x-primary-button
+                        @click="
+                            showModal = true;
+                            sebab_risiko.id = null;
+                            sebab_risiko.nama_sebab = '';
+                            sebab_risiko.pengendalian_internal = '';
+                            sebab_risiko.referensi_pengendalian = '';
+                            sebab_risiko.efektifitas_pengendalian = '';
+                            sebab_risiko.dampak = '';
+                            sebab_risiko.probabilitas = '';
+                            sebab_risiko.kategori_id = '';
+                        ">
+                        Tambah Sebab Risiko
+                    </x-primary-button>
+                @endif
             </div>
             @if($sasaran->sebabRisikos->count())
                 @foreach($sasaran->sebabRisikos as $item)

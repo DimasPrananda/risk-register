@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sasaran extends Model
 {
-    protected $fillable = ['periode_id', 'departemen_id', 'nama_sasaran', 'target', 'risiko', 'dampak'];
+    protected $fillable = ['periode_id', 'departemen_id', 'nama_sasaran', 'target', 'risiko', 'dampak', 'is_published', 'published_at'];
 
     public function periode()
     {
@@ -15,7 +15,7 @@ class Sasaran extends Model
 
     public function sebabRisikos()
     {
-        return $this->hasMany(SebabRisiko::class);
+        return $this->hasMany(SebabRisiko::class, 'sasaran_id');
     }
 
     public function departemen()

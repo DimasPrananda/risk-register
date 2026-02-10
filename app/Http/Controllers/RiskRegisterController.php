@@ -7,6 +7,7 @@ use App\Models\Kategori;
 use App\Models\Periode;
 use App\Models\Sasaran;
 use App\Models\SebabRisiko;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -70,6 +71,7 @@ class RiskRegisterController extends Controller
             'risiko' => $request->risiko,
             'dampak' => $request->dampak,
             'departemen_id' => $request->departemen_id,
+            'is_published' => 1, // reset publish saat update
         ]);
 
         return redirect()->route('risk.sasaran', $sasaran->periode_id)->with('success', 'Sasaran berhasil diperbarui.');
@@ -81,6 +83,30 @@ class RiskRegisterController extends Controller
         $sasaran->delete();
 
         return redirect()->route('risk.sasaran', $periodeId)->with('success', 'Sasaran berhasil dihapus.');
+    }
+
+    public function publish($id)
+    {
+        $sasaran = Sasaran::findOrFail($id);
+
+        $sasaran->update([
+            'is_published' => true,
+            'published_at' => Carbon::now(),
+        ]);
+
+        return back()->with('success', 'Sasaran berhasil dipublish');
+    }
+
+    public function unpublish($id)
+    {
+        $sasaran = Sasaran::findOrFail($id);
+
+        $sasaran->update([
+            'is_published' => false,
+            'published_at' => null,
+        ]);
+
+        return back()->with('success', 'Sasaran berhasil di-unpublish');
     }
 
     public function detail(Sasaran $sasaran)
@@ -239,10 +265,11 @@ class RiskRegisterController extends Controller
             'dokumen_pdf' => 'nullable|file|mimes:pdf|max:5120'
         ]);
         
-        if ($request->hasFile('dokumen_pdf')) {
-            $path = $request->file('dokumen_pdf')->store('perlakuan_risiko', 'public');
+        $path = null;
 
-            $data['dokumen_pdf'] = $path; 
+        if ($request->hasFile('dokumen_pdf')) {
+            $path = $request->file('dokumen_pdf')
+                ->store('dokumen_risiko', 'public');
         }
 
         $sebab_risiko->perlakuanRisikos()->create([

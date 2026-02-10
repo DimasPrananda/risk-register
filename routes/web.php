@@ -26,7 +26,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('admin/dashboard', [DashboardController::class, 'admin'])->middleware(['auth', 'admin'])->name('admin.dashboard');
+Route::get('admin/dashboard/{departemenId?}', [DashboardController::class, 'admin'])->middleware(['auth', 'admin'])->name('admin.dashboard');
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/pengaturan-user', [UserController::class, 'index'])->name('admin.user');
@@ -66,6 +66,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('risk.sasaran.update');
     Route::delete('/admin/risk-register/sasaran/{sasaran}', [RiskRegisterController::class, 'deleteSasaran'])
         ->name('risk.sasaran.destroy');
+
+    // Publish/Unpublish Sasaran
+    Route::post('/admin/sasaran/{id}/publish', [RiskRegisterController::class, 'publish'])
+        ->name('sasaran.publish');
+
+    Route::post('/admin/sasaran/{id}/unpublish', [RiskRegisterController::class, 'unpublish'])
+        ->name('sasaran.unpublish');
 
     // Detail Risiko
     Route::get('/admin/risk-register/sasaran/{sasaran}', [RiskRegisterController::class, 'detail'])

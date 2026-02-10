@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div x-data="{ open: false, showModal: false, selected: null, sasaran: { id: null, nama_sasaran: '', target: '', risiko: '', dampak: '' } }">
+    <div x-data="{ open: false, showModal: false, selected: null, sasaran: { id: null, nama_sasaran: '', target: '', risiko: '', dampak: '' } }" class=" ml-20">
         <x-slot name="header">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Halaman Sasaran') }}
@@ -43,16 +43,32 @@
                                     {{ $departemen->nama_departemen }}
                                 </h4>
 
-                                <div class=" flex flex-1">
+                                <div class=" ml-4 w-full overflow-x-auto">
                                     @if($departemen->sasarans->count())
-                                        <div class="ml-4 grid grid-cols-2 gap-4 w-3/4 h-72">
+                                        <div class="flex gap-4 snap-x snap-mandatory pb-4">
                                             @foreach($departemen->sasarans as $sasaran)
-                                                <div class="flex flex-1 flex-col border rounded p-3 bg-gray-50 dark:bg-gray-700">
+                                                <div class="flex-shrink-0 w-80
+                                                            flex flex-col border rounded p-3
+                                                            bg-gray-50 dark:bg-gray-700
+                                                            snap-start">
                                                     <div class="flex justify-between items-start font-semibold text-xl gap-2">
                                                         <div class="flex-1 min-w-0">
                                                             <p class="truncate">
                                                                 {{ $sasaran->nama_sasaran }}
                                                             </p>
+                                                            @if($sasaran->is_published)
+                                                                <span class="inline-block mt-1 text-xs font-semibold
+                                                                    text-green-700 bg-green-100
+                                                                    px-2 py-0.5 rounded mb-2">
+                                                                    ✅ Published
+                                                                </span>
+                                                            @else
+                                                                <span class="inline-block mt-1 text-xs font-semibold
+                                                                    text-yellow-700 bg-yellow-100
+                                                                    px-2 py-0.5 rounded mb-2">
+                                                                    ⏳ Belum Publish
+                                                                </span>
+                                                            @endif
                                                         </div>
 
                                                         <div class="shrink-0">

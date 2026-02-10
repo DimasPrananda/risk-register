@@ -10,7 +10,7 @@ class SebabRisiko extends Model
 
     public function sasaran()
     {
-        return $this->belongsTo(Sasaran::class);
+        return $this->belongsTo(Sasaran::class, 'sasaran_id');
     }
 
     public function perlakuanRisikos()
@@ -21,5 +21,10 @@ class SebabRisiko extends Model
     public function kategori()
     {
         return $this->belongsTo(Kategori::class);
+    }
+    
+    public function departemen()
+    {
+        return $this->belongsTo(Departemen::class);
     }
 }

@@ -19,4 +19,9 @@ class Departemen extends Model
         return $this->hasMany(Sasaran::class);
     }
 
+    public function sebabRisikos()
+    {
+        return $this->hasMany(SebabRisiko::class, Sasaran::class);
+    }
+
 }
