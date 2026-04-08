@@ -15,30 +15,24 @@
             <!-- SASARAN -->
             <input type="hidden" name="sasaran_id" value="{{ $sasaran->id }}">
 
-            <!-- KATEGORI -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Kategori Risiko
-                </label>
-                <select name="kategori_id"                                
-                        class="mt-1 block w-full rounded-md border-gray-300
-                            dark:bg-gray-700 dark:text-gray-200"
-                        required>
-                    <option value="">-- Pilih Kategori --</option>
-                    @foreach($kategoris as $kategori)
-                        <option value="{{ $kategori->id }}">
-                            {{ $kategori->nama_kategori }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
             <!-- NAMA SEBAB -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Sebab Risiko
                 </label>
                 <textarea name="nama_sebab"
+                        rows="2"
+                        class="mt-1 block w-full rounded-md border-gray-300
+                                dark:bg-gray-700 dark:text-gray-200"
+                        required></textarea>
+            </div>
+
+            <!-- DAMPAK SEBAB RISIKO -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Dampak Sebab Risiko
+                </label>
+                <textarea name="dampak_sebab"
                         rows="2"
                         class="mt-1 block w-full rounded-md border-gray-300
                                 dark:bg-gray-700 dark:text-gray-200"

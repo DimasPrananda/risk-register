@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('periodes', function (Blueprint $table) {
             $table->id();
-            $table->string('bulan_awal');  
-            $table->string('bulan_akhir');  
+            $table->string('bulan_awal'); 
             $table->timestamps();
         });
     }

@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     </head>
-    <body class=" mt-10 font-sans antialiased">
+    <body x-data="{ sidebarOpen: false }" class=" font-sans antialiased">
         <div class="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900">
             <div class=" flex flex-1">
                 <div class=" max-h-full">
@@ -26,8 +26,8 @@
                     
                     <!-- Page Heading -->
                     @isset($header)
-                    <header class="bg-white dark:bg-gray-900 ml-20">
-                        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-12">
+                    <header class=" mt-20 ml-0 sm:ml-20 ">
+                        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
                             {{ $header }}
                         </div>
                     </header>

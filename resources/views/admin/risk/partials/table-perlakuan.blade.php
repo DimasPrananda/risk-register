@@ -1,13 +1,13 @@
 <thead>
     <tr>
-        <th colspan="4"
+        <th colspan="5"
             class="border border-gray-400 px-4 py-2 font-semibold bg-gray-100 dark:bg-gray-700 dark:text-gray-200">
             Target Tingkat Risiko Residual (TR Residual)
         </th>
     </tr>
     <tr class="bg-gray-50 dark:bg-gray-800">
-        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Dampak</th>
-        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Probabilitas</th>
+        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Dampak (Residual)</th>
+        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Probabilitas (Residual)</th>
         <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Skala Risiko</th>
         <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Level Risiko</th>
     </tr>

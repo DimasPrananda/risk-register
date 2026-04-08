@@ -40,6 +40,14 @@
                         {{ $item->nama_sebab }}</textarea>
                 </div>
 
+                <!-- DAMPAK SEBAB RISIKO -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Dampak Sebab Risiko</label>
+                    <textarea name="dampak_sebab" rows="2" class="mt-1 block w-full rounded-md border-gray-300
+                        dark:bg-gray-700 dark:text-gray-200" required>
+                        {{ $item->dampak_sebab }}</textarea>
+                </div>
+
                 <!-- PENGENDALIAN -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Pengendalian Internal</label>

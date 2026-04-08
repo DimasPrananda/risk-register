@@ -1,0 +1,220 @@
+<x-app-layout>
+    <div x-data="{ open: false, showModal: false, selected: null, sasaran: { id: null, nama_sasaran: '', target: '', risiko: '', dampak: '' } }" >
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                {{ __('Halaman Sasaran') }}
+            </h2>
+
+            <a href="{{ route('admin.dashboard') }}"
+            class="text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 hover:text-black">
+                dashboard
+            </a>
+
+            <span class="text-gray-800 dark:text-gray-200 font-bold">
+                / Pilih Periode /
+                {{ \Carbon\Carbon::parse($periode->bulan_awal)->translatedFormat('F Y') }}
+                -
+                {{ \Carbon\Carbon::parse($periode->bulan_akhir)->translatedFormat('F Y') }}
+            </span>
+        </x-slot>
+
+
+        <div class="p-1 ml-20 max-w-7xl mx-auto overflow-x-auto mb-4">
+            <div class=" text-right mb-5">
+
+                <x-primary-button @click="
+                    showModal = true;
+                    sasaran.id = null;
+                    sasaran.nama_sasaran = '';
+                    sasaran.target = '';
+                    sasaran.risiko = '';
+                    sasaran.dampak = '';
+                    ">
+                    Tambah Sasaran
+                </x-primary-button>
+            </div>
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <div class=" bg-white dark:bg-gray-800 p-4">
+                        @foreach($departemens as $departemen)
+                            <div class="mb-6">
+                                <!-- Nama Departemen -->
+                                <h4 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">
+                                    {{ $departemen->nama_departemen }}
+                                </h4>
+
+                                <div class=" ml-4 w-full overflow-x-auto">
+                                    @if($departemen->sasarans->count())
+                                        <div class="flex gap-4 snap-x snap-mandatory pb-4">
+                                            @foreach($departemen->sasarans as $sasaran)
+                                                <div class="flex-shrink-0 w-80
+                                                            flex flex-col border rounded p-3
+                                                            bg-gray-50 dark:bg-gray-700
+                                                            snap-start">
+                                                    <div class="flex justify-between items-start font-semibold text-xl gap-2">
+                                                        <div class="flex-1 min-w-0">
+                                                            <p class="truncate">
+                                                                {{ $sasaran->nama_sasaran }}
+                                                            </p>
+                                                            @if($sasaran->is_published)
+                                                                <span class="inline-block mt-1 text-xs font-semibold
+                                                                    text-green-700 bg-green-100
+                                                                    px-2 py-0.5 rounded mb-2">
+                                                                    ✅ Published
+                                                                </span>
+                                                            @else
+                                                                <span class="inline-block mt-1 text-xs font-semibold
+                                                                    text-yellow-700 bg-yellow-100
+                                                                    px-2 py-0.5 rounded mb-2">
+                                                                    ⏳ Belum Publish
+                                                                </span>
+                                                            @endif
+                                                        </div>
+
+                                                        <div class="shrink-0">
+                                                            <x-dropdown>
+                                                                <x-slot name="trigger">
+                                                                    <button class="p-1">
+                                                                        <img src="{{ asset('icons/menu_vertical.svg') }}"
+                                                                            class="w-4 h-4"
+                                                                            alt="Icon menu vertical">
+                                                                    </button>
+                                                                </x-slot>
+
+                                                                <x-slot name="content">
+                                                                    <x-dropdown-link
+                                                                        href="#"
+                                                                        @click.prevent="
+                                                                            showModal = true;
+                                                                            sasaran.id = {{ $sasaran->id }};
+                                                                            sasaran.nama_sasaran = '{{ $sasaran->nama_sasaran }}';
+                                                                            sasaran.target = '{{ $sasaran->target }}';
+                                                                            sasaran.risiko = '{{ $sasaran->risiko }}';
+                                                                            sasaran.dampak = '{{ $sasaran->dampak }}';
+                                                                            sasaran.departemen_id = {{ $sasaran->departemen_id }};
+                                                                        ">
+                                                                        Edit
+                                                                    </x-dropdown-link>
+                                                                    <form method="POST" action="{{ route('risk.sasaran.destroy', $sasaran) }}">
+                                                                        @csrf
+                                                                        @method('DELETE')
+
+                                                                        <x-dropdown-link
+                                                                            href="#"
+                                                                            onclick="event.preventDefault(); this.closest('form').submit();">
+                                                                            Hapus
+                                                                        </x-dropdown-link>
+                                                                    </form>
+                                                                </x-slot>
+                                                            </x-dropdown>
+                                                        </div>
+                                                    </div>
+                                                    <span class="text-xs font-normal text-gray-400">
+                                                        Dibuat: {{ $sasaran->created_at->format('d/m/Y') }}
+                                                    </span>
+                                                    <div class="flex flex-col text-sm text-gray-600 dark:text-gray-300">
+                                                        <h3>
+                                                            Target: {{ $sasaran->target }}
+                                                        </h3>
+                                                        <h3>
+                                                            Risiko: {{ $sasaran->risiko }}
+                                                        </h3>
+                                                        <h3>
+                                                            Dampak: {{ $sasaran->dampak }}
+                                                        </h3>
+                                                    </div>
+                                                    <div class=" mt-auto flex items-end">
+                                                        <x-secondary-button onclick="window.location='{{ route('user.detail', $sasaran) }}'"
+                                                            class="text-blue-600 dark:text-blue-400 w-full justify-center">
+                                                            Lihat Detail                                                     
+                                                        </x-secondary-button>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <p class="ml-4 text-sm text-gray-400">Belum ada sasaran</p>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click.self="showModal = false">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-11/12 md:w-1/3">
+                    <h2 class="text-lg font-bold mb-4 text-gray-800 dark:text-white" x-text="sasaran.id ? 'Edit Sasaran' : 'Tambah Sasaran'"></h2>
+
+                    <form :action="sasaran.id 
+                        ? '{{ url('/user/risk-register/sasaran') }}/' + sasaran.id 
+                        : '{{ route('user.sasaran.store') }}'"
+                    method="POST">
+
+                    @csrf
+
+                    <template x-if="sasaran.id">
+                        <input type="hidden" name="_method" value="PUT">
+                    </template>
+                        <div class="mb-4">
+                            <input type="hidden" name="departemen_id" value="{{ auth()->user()->departemen_id }}">
+                            <input type="hidden" name="periode_id" value="{{ $periode->id }}">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                                Nama Sasaran
+                            </label>
+                            <input type="text"
+                                    name="nama_sasaran"
+                                    x-model="sasaran.nama_sasaran"
+                                    class="mt-1 block w-full rounded-md border-gray-300
+                                            dark:bg-gray-700 dark:text-gray-200"
+                                    required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                                Target
+                            </label>
+                            <input type="text"
+                                    name="target"
+                                    x-model="sasaran.target"
+                                    class="mt-1 block w-full rounded-md border-gray-300
+                                            dark:bg-gray-700 dark:text-gray-200"
+                                    required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                                Risiko
+                            </label>
+                            <input type="text"
+                                    name="risiko"
+                                    x-model="sasaran.risiko"
+                                    class="mt-1 block w-full rounded-md border-gray-300
+                                            dark:bg-gray-700 dark:text-gray-200"
+                                    required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                                Dampak
+                            </label>
+                            <input type="text"
+                                    name="dampak"
+                                    x-model="sasaran.dampak"
+                                    class="mt-1 block w-full rounded-md border-gray-300
+                                            dark:bg-gray-700 dark:text-gray-200"
+                                    required>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded" x-text="sasaran.id ? 'Update Sasaran' : 'Simpan Sasaran'">
+                                
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

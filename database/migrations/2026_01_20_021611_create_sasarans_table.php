@@ -15,10 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('periode_id')->constrained()->cascadeOnDelete();
             $table->foreignId('departemen_id')->constrained()->cascadeOnDelete();
+
+            $table->foreignId('taksonomi_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('peristiwa_risiko_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('parameter_id')->constrained()->cascadeOnDelete();
+
             $table->string('nama_sasaran');
             $table->string('target');
             $table->string('risiko');
-            $table->string('dampak');
             $table->timestamps();
         });
     }

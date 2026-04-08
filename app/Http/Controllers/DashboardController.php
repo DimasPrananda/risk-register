@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Departemen;
-use App\Models\Periode;
-use App\Models\Sasaran;
-use App\Models\SebabRisiko;
+use App\Models\Pengumuman;
+use App\Models\Periode; 
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -28,17 +28,29 @@ class DashboardController extends Controller
             ? Departemen::findOrFail($request->departemen_id)
             : $departemens->first();
 
+        if ($departemens->isEmpty() || !$periodeAktif) {
+            return view('admin.dashboard', [
+                'departemens' => $departemens,
+                'departemenAktif' => null,
+                'periodes' => $periodes,
+                'periodeAktif' => $periodeAktif,
+                'residualSummary' => [],
+            ]);
+        }
+
         // 5️⃣ Load relasi SESUAI periode aktif
-        $departemenAktif->load([
-            'sasarans' => function ($q) use ($periodeAktif) {
-                $q->where('periode_id', $periodeAktif->id)
-                ->where('is_published', 1) // HANYA yg published
-                  ->with([
-                      'sebabRisikos.kategori',
-                      'sebabRisikos.perlakuanRisikos'
-                  ]);
-            }
-        ]);
+        if ($departemenAktif) {
+            $departemenAktif->load([
+                'sasarans' => function ($q) use ($periodeAktif) {
+                    $q->where('periode_id', $periodeAktif->id)
+                    ->where('is_published', 1)
+                    ->with([
+                        'sebabRisikos.kategori',
+                        'sebabRisikos.perlakuanRisikos'
+                    ]);
+                }
+            ]);
+        }
 
         // 6️⃣ Risk Matrix
         $riskMatrix = [
@@ -117,13 +129,107 @@ class DashboardController extends Controller
             }
         }
 
+        $pengumumen = Pengumuman::where('periode_id', optional($periodeAktif)->id)
+        ->latest()
+        ->get();
+
         // 8️⃣ Kirim ke view
         return view('admin.dashboard', compact(
             'departemens',
             'departemenAktif',
             'periodes',
             'periodeAktif',
-            'residualSummary'
+            'residualSummary',
+            'pengumumen'
+        ));
+    }
+    
+    public function user(Request $request)
+    {
+        $user = Auth::user();
+
+        $departemenAktif = Departemen::findOrFail($user->departemen_id);
+
+        $periodes = Periode::orderBy('bulan_awal', 'desc')->get();
+        $periodeAktif = $request->filled('periode_id')
+            ? Periode::findOrFail($request->periode_id)
+            : $periodes->first();
+
+        $departemenAktif->load([
+            'sasarans' => function ($q) use ($periodeAktif) {
+                $q->where('periode_id', $periodeAktif->id)
+                ->where('is_published', 1)
+                ->with([
+                    'sebabRisikos.kategori',
+                    'sebabRisikos.perlakuanRisikos' => function ($q) {
+                        $q->orderBy('id');
+                    }
+                ]);
+            }
+        ]);
+
+        $riskMatrix = [
+            1 => [1=>['nilai'=>1,'level'=>'Low'], 2=>['nilai'=>5,'level'=>'Low'], 3=>['nilai'=>10,'level'=>'Low to Moderate'], 4=>['nilai'=>15,'level'=>'Moderate'], 5=>['nilai'=>20,'level'=>'High']],
+            2 => [1=>['nilai'=>2,'level'=>'Low'], 2=>['nilai'=>6,'level'=>'Low to Moderate'], 3=>['nilai'=>11,'level'=>'Low to Moderate'], 4=>['nilai'=>16,'level'=>'Moderate to High'], 5=>['nilai'=>21,'level'=>'High']],
+            3 => [1=>['nilai'=>3,'level'=>'Low'], 2=>['nilai'=>8,'level'=>'Low to Moderate'], 3=>['nilai'=>13,'level'=>'Moderate'], 4=>['nilai'=>18,'level'=>'Moderate to High'], 5=>['nilai'=>23,'level'=>'High']],
+            4 => [1=>['nilai'=>4,'level'=>'Low'], 2=>['nilai'=>9,'level'=>'Low to Moderate'], 3=>['nilai'=>14,'level'=>'Moderate'], 4=>['nilai'=>19,'level'=>'Moderate to High'], 5=>['nilai'=>24,'level'=>'High']],
+            5 => [1=>['nilai'=>7,'level'=>'Low to Moderate'], 2=>['nilai'=>12,'level'=>'Moderate'], 3=>['nilai'=>17,'level'=>'Moderate to High'], 4=>['nilai'=>22,'level'=>'High'], 5=>['nilai'=>25,'level'=>'High']],
+        ];
+
+        $residualSummary = [
+            'High' => 0,
+            'Moderate to High' => 0,
+            'Moderate' => 0,
+            'Low to Moderate' => 0,
+            'Low' => 0,
+        ];
+
+        foreach ($departemenAktif->sasarans as $sasaran) {
+            foreach ($sasaran->sebabRisikos as $risiko) {
+
+                // ===== INHERENT RISK =====
+                $c = $risiko->dampak;
+                $l = $risiko->probabilitas;
+
+                if ($c && $l && isset($riskMatrix[$l][$c])) {
+                    $risiko->skala_risiko = $riskMatrix[$l][$c]['nilai'];
+                    $risiko->level_risiko = $riskMatrix[$l][$c]['level'];
+                } else {
+                    $risiko->level_risiko = '-';
+                }
+
+                // ===== RESIDUAL RISK =====
+                $residual = $risiko->perlakuanRisikos->last();
+
+                if (!$residual) continue;
+
+                $cR = $residual->dampak;
+                $lR = $residual->probabilitas;
+
+                if ($cR && $lR && isset($riskMatrix[$lR][$cR])) {
+                    $levelResidual = $riskMatrix[$lR][$cR]['level'];
+                    $residual->skala_risiko = $riskMatrix[$lR][$cR]['nilai'];
+                    $residual->level_risiko = $levelResidual;
+
+                    if (isset($residualSummary[$levelResidual])) {
+                        $residualSummary[$levelResidual]++;
+                    }
+                } else {
+                    $residual->level_risiko = '-';
+                }
+            }
+        }
+
+        $pengumumen = Pengumuman::where('periode_id', optional($periodeAktif)->id)
+            ->latest()
+            ->get();
+
+        return view('user.dashboard', compact(
+            'departemenAktif',
+            'periodes',
+            'periodeAktif',
+            'residualSummary',
+            'pengumumen'
         ));
     }
 }

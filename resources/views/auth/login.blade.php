@@ -44,4 +44,22 @@
             </x-primary-button>
         </div>
     </form>
+    <div class="mt-6">
+        <a href="{{ route('google.login') }}"
+            class="w-full inline-flex items-center justify-center gap-2
+            border border-gray-300 dark:border-gray-600
+            rounded-md px-4 py-2
+            text-sm font-medium
+            text-gray-700 dark:text-gray-200
+            bg-white dark:bg-gray-800
+            hover:bg-gray-100 dark:hover:bg-gray-700
+            transition">
+
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg"
+                class="w-5 h-5"
+                alt="Google">
+
+            Login dengan Google
+        </a>
+    </div>
 </x-guest-layout>

@@ -6,7 +6,7 @@
         <a href="{{ route('admin.dashboard') }}" class="text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 hover:text-black">dashboard </a><a class="text-gray-800 dark:text-gray-200 font-bold">/ Pilih Periode</a>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 ml-20">
+    <div class="p-4 sm:p-4 ml-0 sm:ml-20 max-w-7xl mx-auto overflow-x-auto mb-4">
         <form method="POST" action="{{ route('risk.submit-periode') }}">
             @csrf
 
@@ -15,8 +15,6 @@
                 @foreach($periodes as $periode)
                 <option value="{{ $periode->id }}">
                     {{ \Carbon\Carbon::parse($periode->bulan_awal)->translatedFormat('F Y') }}
-                    -
-                    {{ \Carbon\Carbon::parse($periode->bulan_akhir)->translatedFormat('F Y') }}
                 </option>
                 @endforeach
             </select>

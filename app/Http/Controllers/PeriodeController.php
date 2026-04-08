@@ -17,12 +17,10 @@ class PeriodeController extends Controller
     {
         $request->validate([
             'bulan_awal' => 'required',
-            'bulan_akhir' => 'required|after_or_equal:bulan_awal',
         ]);
 
         Periode::create([
             'bulan_awal' => $request->bulan_awal,
-            'bulan_akhir' => $request->bulan_akhir,
         ]);
 
         return redirect()->back()->with('success', 'Periode berhasil disimpan');
@@ -32,12 +30,10 @@ class PeriodeController extends Controller
     {
         $request->validate([
             'bulan_awal' => 'required',
-            'bulan_akhir' => 'required|after_or_equal:bulan_awal',
         ]);
 
         $periode->update([
             'bulan_awal' => $request->bulan_awal,
-            'bulan_akhir' => $request->bulan_akhir,
         ]);
 
         return redirect()->back()->with('success', 'Periode berhasil diperbarui');

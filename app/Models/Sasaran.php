@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sasaran extends Model
 {
-    protected $fillable = ['periode_id', 'departemen_id', 'nama_sasaran', 'target', 'risiko', 'dampak', 'is_published', 'published_at'];
+    protected $fillable = ['periode_id', 'departemen_id', 'taksonomi_id', 'peristiwa_risiko_id', 'parameter_id', 'nama_sasaran', 'target', 'risiko', 'dampak', 'is_published', 'published_at'];
 
     public function periode()
     {
@@ -21,5 +21,20 @@ class Sasaran extends Model
     public function departemen()
     {
         return $this->belongsTo(Departemen::class);
+    }
+
+    public function taksonomi()
+    {
+        return $this->belongsTo(Taksonomi::class);
+    }
+
+    public function peristiwaRisiko()
+    {
+        return $this->belongsTo(PeristiwaRisiko::class);
+    }
+
+    public function parameter()
+    {
+        return $this->belongsTo(Parameter::class);
     }
 }

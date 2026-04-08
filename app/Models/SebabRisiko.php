@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SebabRisiko extends Model
 {
-    protected $fillable = ['sasaran_id', 'nama_sebab', 'kategori_id', 'pengendalian_internal', 'referensi_pengendalian', 'efektifitas_pengendalian', 'dampak', 'probabilitas'];
+    protected $fillable = ['sasaran_id', 'nama_sebab', 'kategori_id', 'pengendalian_internal', 'referensi_pengendalian', 'efektifitas_pengendalian', 'dampak_sebab', 'dampak', 'probabilitas'];
 
     public function sasaran()
     {

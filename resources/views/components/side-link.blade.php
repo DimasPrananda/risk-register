@@ -2,8 +2,20 @@
 
 @php
 $classes = ($active ?? false)
-    ? 'flex items-center justify-center p-4 dark:bg-gray-900 text-white transition duration-150 ease-in-out'
-    : 'flex items-center justify-center p-4 text-gray-400 hover:bg-gray-700 hover:text-white transition duration-150 ease-in-out';
+    ? '
+        flex items-center p-4
+        bg-blue-500 text-white
+        dark:bg-gray-900 dark:text-white
+        transition duration-150 ease-in-out
+      '
+    : '
+        flex items-center p-4
+        text-gray-500
+        hover:bg-gray-200 hover:text-blue-600
+        dark:text-gray-400
+        dark:hover:bg-gray-700 dark:hover:text-white
+        transition duration-150 ease-in-out
+      ';
 @endphp
 
 <a {{ $attributes->merge(['class' => $classes]) }}>

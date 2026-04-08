@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Departemen;
 use App\Models\Kategori;
+use App\Models\Parameter;
+use App\Models\PerlakuanRisiko;
 use App\Models\Periode;
+use App\Models\PeristiwaRisiko;
 use App\Models\Sasaran;
 use App\Models\SebabRisiko;
+use App\Models\Taksonomi;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -29,7 +33,10 @@ class RiskRegisterController extends Controller
         $departemens = Departemen::with(['sasarans' => function ($q) use ($periode) {
             $q->where('periode_id', $periode->id);
         }])->get();
-        return view('admin.risk.sasaran', compact('periode', 'departemens'));
+
+        $taksonomis = Taksonomi::all();
+
+        return view('admin.risk.sasaran', compact('periode', 'departemens', 'taksonomis'));
     }
 
     public function createSasaran(Request $request)
@@ -40,7 +47,9 @@ class RiskRegisterController extends Controller
             'nama_sasaran' => 'required|string|max:255',
             'target' => 'required|string|max:255',
             'risiko' => 'required|string|max:255',
-            'dampak' => 'required|string|max:255',
+            'taksonomi_id' => 'required|exists:taksonomis,id',
+            'peristiwa_risiko_id' => 'required|exists:peristiwa_risikos,id',
+            'parameter_id' => 'required|exists:parameters,id',
         ]);
 
         Sasaran::create([
@@ -49,7 +58,9 @@ class RiskRegisterController extends Controller
             'nama_sasaran' => $request->nama_sasaran,
             'target' => $request->target,
             'risiko' => $request->risiko,
-            'dampak' => $request->dampak,
+            'taksonomi_id' => $request->taksonomi_id,
+            'peristiwa_risiko_id' => $request->peristiwa_risiko_id,
+            'parameter_id' => $request->parameter_id,
         ]);
 
         return redirect()->route('risk.sasaran', $request->periode_id)->with('success', 'Sasaran berhasil ditambahkan.');
@@ -61,16 +72,20 @@ class RiskRegisterController extends Controller
             'nama_sasaran' => 'required|string|max:255',
             'target' => 'required|string|max:255',
             'risiko' => 'required|string|max:255',
-            'dampak' => 'required|string|max:255',
             'departemen_id' => 'required|exists:departemens,id',
+            'taksonomi_id' => 'required|exists:taksonomis,id',
+            'peristiwa_risiko_id' => 'required|exists:peristiwa_risikos,id',
+            'parameter_id' => 'required|exists:parameters,id',
         ]);
 
         $sasaran->update([
             'nama_sasaran' => $request->nama_sasaran,
             'target' => $request->target,
             'risiko' => $request->risiko,
-            'dampak' => $request->dampak,
             'departemen_id' => $request->departemen_id,
+            'taksonomi_id' => $request->taksonomi_id,
+            'peristiwa_risiko_id' => $request->peristiwa_risiko_id,
+            'parameter_id' => $request->parameter_id,
             'is_published' => 1, // reset publish saat update
         ]);
 
@@ -83,6 +98,16 @@ class RiskRegisterController extends Controller
         $sasaran->delete();
 
         return redirect()->route('risk.sasaran', $periodeId)->with('success', 'Sasaran berhasil dihapus.');
+    }
+
+    public function getRisiko($taksonomi_id)
+    {
+        return PeristiwaRisiko::where('taksonomi_id', $taksonomi_id)->get();
+    }
+
+    public function getParameter($risiko_id)
+    {
+        return Parameter::where('peristiwa_risiko_id', $risiko_id)->get();
     }
 
     public function publish($id)
@@ -194,22 +219,22 @@ class RiskRegisterController extends Controller
     public function createSebabRisiko(Request $request, Sasaran $sasaran)
     {
         $request->validate([
-            'kategori_id' => 'required|exists:kategoris,id',
             'nama_sebab' => 'required|string',
             'pengendalian_internal' => 'required|string',
             'referensi_pengendalian' => 'required|string|max:255',
             'efektifitas_pengendalian' => 'required|string|max:255',
             'dampak' => 'nullable|integer',
+            'dampak_sebab' => 'nullable|string',
             'probabilitas' => 'nullable|integer',
         ]);
 
         $sasaran->sebabRisikos()->create([
-            'kategori_id' => $request->kategori_id,
             'nama_sebab' => $request->nama_sebab,
             'pengendalian_internal' => $request->pengendalian_internal,
             'referensi_pengendalian' => $request->referensi_pengendalian,
             'efektifitas_pengendalian' => $request->efektifitas_pengendalian,
             'dampak' => $request->dampak,
+            'dampak_sebab' => $request->dampak_sebab,
             'probabilitas' => $request->probabilitas,
         ]);
 
@@ -220,23 +245,23 @@ class RiskRegisterController extends Controller
     {
         $request->validate([
             'sebab_risiko_id' => 'required|exists:sebab_risikos,id',
-            'kategori_id' => 'required|exists:kategoris,id',
             'nama_sebab' => 'required|string',
             'pengendalian_internal' => 'required|string',
             'referensi_pengendalian' => 'required|string|max:255',
             'efektifitas_pengendalian' => 'required|string|max:255',
             'dampak' => 'nullable|integer',
+            'dampak_sebab' => 'nullable|string',
             'probabilitas' => 'nullable|integer',
         ]);
 
         $sebabRisiko = $sasaran->sebabRisikos()->findOrFail($request->sebab_risiko_id);
         $sebabRisiko->update([
-            'kategori_id' => $request->kategori_id,
             'nama_sebab' => $request->nama_sebab,
             'pengendalian_internal' => $request->pengendalian_internal,
             'referensi_pengendalian' => $request->referensi_pengendalian,
             'efektifitas_pengendalian' => $request->efektifitas_pengendalian,
             'dampak' => $request->dampak,
+            'dampak_sebab' => $request->dampak_sebab,
             'probabilitas' => $request->probabilitas,
         ]);
 
@@ -261,8 +286,22 @@ class RiskRegisterController extends Controller
             'perlakuan_risiko' => 'required|string',
             'dampak' => 'nullable|integer',
             'probabilitas' => 'nullable|integer',
+            'tanggal_pelaksanaan' => 'required|string',
+
+            'output_target' => 'nullable|string',
+            'output_realisasi' => 'nullable|string',
+
+            'timeline_periode' => 'nullable|string',
+            'timeline_target' => 'nullable|string',
+            'timeline_realisasi' => 'nullable|string',
+
+            'biaya_target' => 'nullable|numeric',
+            'biaya_realisasi' => 'nullable|numeric',
+
+            'biaya_mitigasi' => 'nullable|numeric',
             'periode' => 'required|in:Bulanan,Triwulan,Semester,Tahunan',
-            'dokumen_pdf' => 'nullable|file|mimes:pdf|max:5120'
+            'dokumen_pdf' => 'nullable|file|mimes:pdf|max:5120',
+            'komentar' => 'nullable|string',
         ]);
         
         $path = null;
@@ -276,8 +315,22 @@ class RiskRegisterController extends Controller
             'perlakuan_risiko' => $request->perlakuan_risiko,
             'dampak' => $request->dampak,
             'probabilitas' => $request->probabilitas,
+            'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
+
+            'output_target' => $request->output_target,
+            'output_realisasi' => $request->output_realisasi,
+
+            'timeline_periode' => $request->timeline_periode,
+            'timeline_target' => $request->timeline_target,
+            'timeline_realisasi' => $request->timeline_realisasi,
+
+            'biaya_target' => $request->biaya_target,
+            'biaya_realisasi' => $request->biaya_realisasi,
+
+            'biaya_mitigasi' => $request->biaya_mitigasi,
             'periode' => $request->periode,
             'dokumen_pdf' => $path,
+            'komentar' => $request->komentar,
         ]);
 
         return redirect()->route('risk.detail', $sebab_risiko->sasaran_id)->with('success', 'Perlakuan risiko berhasil ditambahkan.');
@@ -290,6 +343,19 @@ class RiskRegisterController extends Controller
             'perlakuan_risiko' => 'required|string',
             'dampak' => 'nullable|integer',
             'probabilitas' => 'nullable|integer',
+            'tanggal_pelaksanaan' => 'required|string',
+            
+            'output_target' => 'nullable|string',
+            'output_realisasi' => 'nullable|string',
+
+            'timeline_periode' => 'nullable|string',
+            'timeline_target' => 'nullable|string',
+            'timeline_realisasi' => 'nullable|string',
+
+            'biaya_target' => 'nullable|numeric',
+            'biaya_realisasi' => 'nullable|numeric',
+
+            'biaya_mitigasi' => 'nullable|numeric',
             'periode' => 'required|in:Bulanan,Triwulan,Semester,Tahunan',
             'dokumen_pdf' => 'nullable|file|mimes:pdf|max:5120'
         ]);
@@ -302,6 +368,19 @@ class RiskRegisterController extends Controller
             'perlakuan_risiko' => $request->perlakuan_risiko,
             'dampak' => $request->dampak,
             'probabilitas' => $request->probabilitas,
+            'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
+
+            'output_target' => $request->output_target,
+            'output_realisasi' => $request->output_realisasi,
+
+            'timeline_periode' => $request->timeline_periode,
+            'timeline_target' => $request->timeline_target,
+            'timeline_realisasi' => $request->timeline_realisasi,
+
+            'biaya_target' => $request->biaya_target,
+            'biaya_realisasi' => $request->biaya_realisasi,
+            
+            'biaya_mitigasi' => $request->biaya_mitigasi,
             'periode' => $request->periode,
         ];
 
@@ -337,5 +416,31 @@ class RiskRegisterController extends Controller
         $perlakuanRisiko->delete();
 
         return redirect()->route('risk.detail', $sasaranId)->with('success', 'Perlakuan risiko berhasil dihapus.');
-    }   
+    }
+    
+    public function updateRealisasi(Request $request, $id)
+    {
+        $request->validate([
+            'type' => 'required|in:output,timeline,biaya',
+            'value' => 'nullable'
+        ]);
+
+        $data = PerlakuanRisiko::findOrFail($id);
+
+        if ($request->type == 'output') {
+            $data->output_realisasi = $request->value;
+        }
+
+        if ($request->type == 'timeline') {
+            $data->timeline_realisasi = $request->value;
+        }
+
+        if ($request->type == 'biaya') {
+            $data->biaya_realisasi = $request->value;
+        }
+
+        $data->save();
+
+        return back()->with('success', 'Realisasi berhasil disimpan');
+    }
 }

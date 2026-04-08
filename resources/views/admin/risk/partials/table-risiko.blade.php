@@ -6,8 +6,8 @@
         </th>
     </tr>
     <tr class="bg-gray-50 dark:bg-gray-800">
-        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Dampak</th>
-        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Probabilitas</th>
+        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Dampak (Inherent)</th>
+        <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Probabilitas (Inherent)</th>
         <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Skala Risiko</th>
         <th class="border border-gray-400 dark:text-gray-200 px-4 py-2">Level Risiko</th>
     </tr>

@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('sebab_risikos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sasaran_id')->constrained()->onDelete('cascade');
-            $table->foreignId('kategori_id')->constrained()->cascadeOnDelete();
             $table->text('nama_sebab');
             $table->text('pengendalian_internal');
             $table->string('referensi_pengendalian');
             $table->string('efektifitas_pengendalian');
+            $table->text('dampak_sebab');
             $table->integer('dampak')->nullable();
             $table->integer('probabilitas')->nullable();
             $table->timestamps();
