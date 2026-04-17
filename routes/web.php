@@ -1,5 +1,7 @@
 <?php
 
+use App\Exports\DepartemenExport;
+use App\Exports\SasaranExport;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\KategoriController;
@@ -14,8 +16,8 @@ use App\Http\Controllers\PeristiwaRisikoController;
 use App\Http\Controllers\PerlakuanRisikoKomentarController;
 use App\Http\Controllers\TaksonomiController;
 use App\Http\Controllers\UserRiskRegisterController;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/', function () {
     return view('welcome');
@@ -196,3 +198,19 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/parameter/{parameter}', [ParameterController::class, 'update'])->name('parameter.update');
     Route::delete('/admin/parameter/{parameter}', [ParameterController::class, 'destroy'])->name('parameter.destroy');
 });
+
+Route::get('/sasaran/export/{id}', function ($id) {
+    return Excel::download(new SasaranExport($id), 'sasaran.xlsx');
+})->name('sasaran.export');
+
+Route::get('/departemen/export/{id}', function ($id) {
+
+    $departemen = \App\Models\Departemen::with('sasarans')->findOrFail($id);
+
+    if ($departemen->sasarans->isEmpty()) {
+        abort(404, 'Data sasaran kosong');
+    }
+
+    return Excel::download(new DepartemenExport($id), 'departemen.xlsx');
+
+})->name('departemen.export');

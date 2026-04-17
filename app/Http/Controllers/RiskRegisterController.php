@@ -286,19 +286,16 @@ class RiskRegisterController extends Controller
             'perlakuan_risiko' => 'required|string',
             'dampak' => 'nullable|integer',
             'probabilitas' => 'nullable|integer',
-            'tanggal_pelaksanaan' => 'required|string',
 
             'output_target' => 'nullable|string',
             'output_realisasi' => 'nullable|string',
 
-            'timeline_periode' => 'nullable|string',
             'timeline_target' => 'nullable|string',
             'timeline_realisasi' => 'nullable|string',
 
             'biaya_target' => 'nullable|numeric',
             'biaya_realisasi' => 'nullable|numeric',
 
-            'biaya_mitigasi' => 'nullable|numeric',
             'periode' => 'required|in:Bulanan,Triwulan,Semester,Tahunan',
             'dokumen_pdf' => 'nullable|file|mimes:pdf|max:5120',
             'komentar' => 'nullable|string',
@@ -315,19 +312,16 @@ class RiskRegisterController extends Controller
             'perlakuan_risiko' => $request->perlakuan_risiko,
             'dampak' => $request->dampak,
             'probabilitas' => $request->probabilitas,
-            'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
 
             'output_target' => $request->output_target,
             'output_realisasi' => $request->output_realisasi,
 
-            'timeline_periode' => $request->timeline_periode,
             'timeline_target' => $request->timeline_target,
             'timeline_realisasi' => $request->timeline_realisasi,
 
             'biaya_target' => $request->biaya_target,
             'biaya_realisasi' => $request->biaya_realisasi,
 
-            'biaya_mitigasi' => $request->biaya_mitigasi,
             'periode' => $request->periode,
             'dokumen_pdf' => $path,
             'komentar' => $request->komentar,
@@ -343,19 +337,16 @@ class RiskRegisterController extends Controller
             'perlakuan_risiko' => 'required|string',
             'dampak' => 'nullable|integer',
             'probabilitas' => 'nullable|integer',
-            'tanggal_pelaksanaan' => 'required|string',
             
             'output_target' => 'nullable|string',
             'output_realisasi' => 'nullable|string',
 
-            'timeline_periode' => 'nullable|string',
             'timeline_target' => 'nullable|string',
             'timeline_realisasi' => 'nullable|string',
 
             'biaya_target' => 'nullable|numeric',
             'biaya_realisasi' => 'nullable|numeric',
 
-            'biaya_mitigasi' => 'nullable|numeric',
             'periode' => 'required|in:Bulanan,Triwulan,Semester,Tahunan',
             'dokumen_pdf' => 'nullable|file|mimes:pdf|max:5120'
         ]);
@@ -368,19 +359,16 @@ class RiskRegisterController extends Controller
             'perlakuan_risiko' => $request->perlakuan_risiko,
             'dampak' => $request->dampak,
             'probabilitas' => $request->probabilitas,
-            'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
 
             'output_target' => $request->output_target,
             'output_realisasi' => $request->output_realisasi,
 
-            'timeline_periode' => $request->timeline_periode,
             'timeline_target' => $request->timeline_target,
             'timeline_realisasi' => $request->timeline_realisasi,
 
             'biaya_target' => $request->biaya_target,
             'biaya_realisasi' => $request->biaya_realisasi,
             
-            'biaya_mitigasi' => $request->biaya_mitigasi,
             'periode' => $request->periode,
         ];
 

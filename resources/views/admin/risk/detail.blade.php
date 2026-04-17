@@ -86,6 +86,10 @@
                 </div>
             </div>
             <div class=" text-right my-5 flex justify-end gap-3">
+                <a href="{{ route('sasaran.export', $sasaran->id) }}"
+                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    Download Excel
+                </a>
                 @if(!$sasaran->is_published)
                     <form method="POST" action="{{ route('sasaran.publish', $sasaran->id) }}"
                         onsubmit="return confirm('Yakin publish sasaran ini? Data akan tampil di dashboard.')">
@@ -346,7 +350,6 @@
                                                     'probabilitas' => $perlakuan->probabilitas,
                                                     'skala_risiko' => $perlakuan->skala_risiko,
                                                     'level_risiko' => $perlakuan->level_risiko,
-                                                    'biaya_mitigasi' => $perlakuan->biaya_mitigasi,
                                                 ])
                                             </table>
                                         </div>

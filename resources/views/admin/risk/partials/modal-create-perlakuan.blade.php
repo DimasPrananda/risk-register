@@ -25,17 +25,6 @@
                         class="mt-1 block w-full rounded-md border-gray-300
                         dark:bg-gray-700 dark:text-gray-200" required></textarea>
                 </div>
-    
-                <select name="periode"
-                    class="mt-1 mb-4 block w-full rounded-md border-gray-300
-                        dark:bg-gray-700 dark:text-gray-200"
-                    required>
-                    <option value="">-- Pilih Periode --</option>
-                    <option value="Bulanan">Bulanan</option>
-                    <option value="Triwulan">Triwulan</option>
-                    <option value="Semester">Semester</option>
-                    <option value="Tahunan">Tahunan</option>
-                </select>
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">

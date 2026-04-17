@@ -80,10 +80,19 @@
                     <div class=" bg-white dark:bg-gray-800 p-4">
                         @foreach($departemens as $departemen)
                             <div class="mb-6">
-                                <!-- Nama Departemen -->
-                                <h4 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">
-                                    {{ $departemen->nama_departemen }}
-                                </h4>
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-lg font-bold text-gray-800 dark:text-gray-200">
+                                        {{ $departemen->nama_departemen }}
+                                    </h4>
+
+                                    <a href="{{ $departemen->sasarans->count() ? route('departemen.export', $departemen->id) : '#' }}"
+                                    class="text-sm px-3 py-1 rounded text-white
+                                    {{ $departemen->sasarans->count() 
+                                            ? 'bg-green-600 hover:bg-green-700' 
+                                            : 'bg-gray-400 cursor-not-allowed pointer-events-none' }}">
+                                        Download Excel
+                                    </a>
+                                </div>
 
                                 <div class=" ml-4 w-full overflow-x-auto">
                                     @if($departemen->sasarans->count())

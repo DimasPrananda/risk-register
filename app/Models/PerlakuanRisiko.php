@@ -8,15 +8,12 @@ class PerlakuanRisiko extends Model
 {
     protected $fillable = [
                         'sebab_risiko_id', 
-                        'perlakuan_risiko', 
-                        'tanggal_pelaksanaan', 
+                        'perlakuan_risiko',  
                         'dampak', 'probabilitas', 
-                        'biaya_mitigasi', 
                         'periode', 
                         'dokumen_pdf',
                         'output_target',
                         'output_realisasi',
-                        'timeline_periode',
                         'timeline_target',
                         'timeline_realisasi',
                         'biaya_target',
